@@ -1,0 +1,22 @@
+# yaml-language-server: $schema=../../../config_schema.json
+
+root:
+  $ref: '#/abstractions/root'
+
+
+
+abstractions:
+  root:
+    children:
+      app:
+        name: app
+      features:
+        name: features
+      shared:
+        name: shared
+    rules:
+      dependencies-direction:
+        order:
+          - app
+          - features
+          - shared

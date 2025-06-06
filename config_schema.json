@@ -1,0 +1,224 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "ConfigSchema",
+  "type": "object",
+  "required": [
+    "root"
+  ],
+  "properties": {
+    "abstractions": {
+      "description": "Reusable abstractions",
+      "type": [
+        "object",
+        "null"
+      ],
+      "additionalProperties": {
+        "$ref": "#/definitions/AbstractionSchema"
+      }
+    },
+    "base_url": {
+      "description": "Base url",
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "files": {
+      "description": "Globs of files to check",
+      "type": [
+        "array",
+        "null"
+      ],
+      "items": {
+        "type": "string"
+      }
+    },
+    "ignores": {
+      "description": "Globs of files to ignore",
+      "type": [
+        "array",
+        "null"
+      ],
+      "items": {
+        "type": "string"
+      }
+    },
+    "root": {
+      "description": "Root abstraction",
+      "allOf": [
+        {
+          "$ref": "#/definitions/AbstractionConfigLink"
+        }
+      ]
+    }
+  },
+  "definitions": {
+    "AbstractionConfigLink": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": [
+            "Link"
+          ],
+          "properties": {
+            "Link": {
+              "type": "object",
+              "required": [
+                "ref"
+              ],
+              "properties": {
+                "ref": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": [
+            "Schema"
+          ],
+          "properties": {
+            "Schema": {
+              "$ref": "#/definitions/AbstractionSchema"
+            }
+          },
+          "additionalProperties": false
+        }
+      ]
+    },
+    "AbstractionSchema": {
+      "type": "object",
+      "properties": {
+        "children": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "additionalProperties": {
+            "$ref": "#/definitions/AbstractionConfigLink"
+          }
+        },
+        "name": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "rules": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "$ref": "#/definitions/RuleConfigSchema"
+          }
+        }
+      }
+    },
+    "RuleConfigSchema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": [
+            "type"
+          ],
+          "properties": {
+            "abstractions": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "items": {
+                "type": "string"
+              }
+            },
+            "type": {
+              "type": "string",
+              "enum": [
+                "RequiredChildren"
+              ]
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "type"
+          ],
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": [
+                "NoUnabstractionFiles"
+              ]
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "type"
+          ],
+          "properties": {
+            "name": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "pattern": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "type": {
+              "type": "string",
+              "enum": [
+                "PublicAbstraction"
+              ]
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "type"
+          ],
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": [
+                "RestrictCrossImports"
+              ]
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "order",
+            "type"
+          ],
+          "properties": {
+            "order": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "type": {
+              "type": "string",
+              "enum": [
+                "DependenciesDirection"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  }
+}

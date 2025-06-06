@@ -1,0 +1,114 @@
+{
+  "$schema": "../../config_schema.json",
+  "root": {
+    "$ref": "#/abstractions/root"
+  },
+  "abstractions": {
+    "root": {
+      "children": {
+        "app": {
+          "$ref": "#/abstractions/app"
+        },
+        "features": {
+          "$ref": "#/abstractions/features"
+        },
+        "shared": {
+          "$ref": "#/abstractions/shared"
+        }
+      },
+      "rules": {
+        "dependencies-direction": {
+          "order": ["app", "features", "shared"]
+        },
+        "no-unabstraction-files": {},
+        "required-children": {
+          "pattern": ["app", "features", "shared"]
+        }
+      }
+    },
+    "app": {
+      "$ref": "#/abstractions/module"
+    },
+    "features": {
+      "children": {
+        "*": {
+          "$ref": "#/abstractions/feature"
+        }
+      }
+    },
+    "shared": {
+      "$ref": "#/abstractions/module"
+    },
+    "feature": {
+      "extend": {
+        "$ref": "#/abstractions/module"
+      },
+      "rules": {
+        "dependencies-direction": {
+          "order": [
+            "domain*",
+            "dependencies-port",
+            "...",
+            "compose*",
+            "public-api"
+          ]
+        }
+      }
+    },
+    "public-api": {
+      "extend": {
+        "$ref": "#/abstractions/group"
+      }
+    },
+    "dependencies-port": {
+      "extend": {
+        "$ref": "#/abstractions/group"
+      }
+    },
+    "strict-group": {
+      "extend": {
+        "$ref": "#/abstractions/group"
+      },
+      "rules": {
+        "restrict-cross-imports": {}
+      }
+    },
+    "group": {
+      "children": {
+        "*.m": {
+          "$ref": "#/abstractions/module"
+        },
+        "*.sg": {
+          "$ref": "#/abstractions/strict-group"
+        },
+        "*": {
+          "$ref": "#/abstractions/group"
+        }
+      }
+    },
+    "module": {
+      "children": {
+        "dependencies-port": {
+          "$ref": "#/abstractions/dependencies-port"
+        },
+        "*.m": {
+          "$ref": "#/abstractions/module"
+        },
+        "*.sg": {
+          "$ref": "#/abstractions/strict-group"
+        },
+        "*": {
+          "$ref": "#/abstractions/group"
+        },
+        "{index*,*.page.*,*pages*}": {
+          "$ref": "#/abstractions/public-api"
+        }
+      },
+      "rules": {
+        "public-api": {
+          "pattern": ["public-api"]
+        }
+      }
+    }
+  }
+}

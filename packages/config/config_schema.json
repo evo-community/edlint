@@ -1,0 +1,414 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "ConfigSchema",
+  "type": "object",
+  "required": [
+    "root"
+  ],
+  "properties": {
+    "abstractions": {
+      "description": "Reusable abstractions",
+      "type": [
+        "object",
+        "null"
+      ],
+      "additionalProperties": {
+        "$ref": "#/definitions/AbstractionSchema"
+      }
+    },
+    "base_url": {
+      "description": "Base url",
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "files": {
+      "description": "Globs of files to check",
+      "type": [
+        "array",
+        "null"
+      ],
+      "items": {
+        "type": "string"
+      }
+    },
+    "ignores": {
+      "description": "Globs of files to ignore",
+      "type": [
+        "array",
+        "null"
+      ],
+      "items": {
+        "type": "string"
+      }
+    },
+    "root": {
+      "description": "Root abstraction",
+      "allOf": [
+        {
+          "$ref": "#/definitions/AbstractionFieldValueSchema"
+        }
+      ]
+    }
+  },
+  "definitions": {
+    "AbstractionFieldValueSchema": {
+      "anyOf": [
+        {
+          "$ref": "#/definitions/AbstractionLinkSchema"
+        },
+        {
+          "$ref": "#/definitions/NamedAbstractionSchema"
+        }
+      ]
+    },
+    "AbstractionLinkSchema": {
+      "type": "object",
+      "required": [
+        "$ref"
+      ],
+      "properties": {
+        "$ref": {
+          "type": "string"
+        }
+      }
+    },
+    "AbstractionSchema": {
+      "type": "object",
+      "properties": {
+        "children": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "additionalProperties": {
+            "$ref": "#/definitions/AbstractionFieldValueSchema"
+          }
+        },
+        "extend": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/AbstractionLinkSchema"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "rules": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/RulesConfigSchema"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "DependenciesDirectionRuleSchema": {
+      "type": "object",
+      "required": [
+        "order"
+      ],
+      "properties": {
+        "order": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "severity": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/Severity"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "DependenciesPortRuleSchema": {
+      "type": "object",
+      "properties": {
+        "ignore_pattern": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "string"
+          }
+        },
+        "names": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "string"
+          }
+        },
+        "pattern": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "string"
+          }
+        },
+        "severity": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/Severity"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "NamedAbstractionSchema": {
+      "type": "object",
+      "required": [
+        "name"
+      ],
+      "properties": {
+        "children": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "additionalProperties": {
+            "$ref": "#/definitions/AbstractionFieldValueSchema"
+          }
+        },
+        "extend": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/AbstractionLinkSchema"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "name": {
+          "type": "string"
+        },
+        "rules": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/RulesConfigSchema"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "NoUnabstractionFilesRuleSchema": {
+      "type": "object",
+      "properties": {
+        "severity": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/Severity"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "PublicApiRuleSchema": {
+      "type": "object",
+      "properties": {
+        "ignore_pattern": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "string"
+          }
+        },
+        "names": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "string"
+          }
+        },
+        "pattern": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "string"
+          }
+        },
+        "severity": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/Severity"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "RequiredChildrenRuleSchema": {
+      "type": "object",
+      "properties": {
+        "ignore_pattern": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "string"
+          }
+        },
+        "names": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "string"
+          }
+        },
+        "pattern": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "string"
+          }
+        },
+        "severity": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/Severity"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "RestrictCrossImportsRuleSchema": {
+      "type": "object",
+      "properties": {
+        "ignore_pattern": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "string"
+          }
+        },
+        "severity": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/Severity"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "RulesConfigSchema": {
+      "type": "object",
+      "properties": {
+        "dependencies-direction": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/DependenciesDirectionRuleSchema"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "dependencies-port": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/DependenciesPortRuleSchema"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "no-unabstraction-files": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/NoUnabstractionFilesRuleSchema"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "public-api": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/PublicApiRuleSchema"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "required-children": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/RequiredChildrenRuleSchema"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "restrict-cross-imports": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/RestrictCrossImportsRuleSchema"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "Severity": {
+      "type": "string",
+      "enum": [
+        "off",
+        "warn",
+        "error"
+      ]
+    }
+  }
+}

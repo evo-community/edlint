@@ -1,0 +1,36 @@
+// A launch configuration that compiles the extension and then opens it inside a new window
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "extensionHost",
+      "request": "launch",
+      "name": "Launch Client",
+      "runtimeExecutable": "${execPath}",
+      "args": ["--extensionDevelopmentPath=${workspaceFolder}/packages/vscode"],
+      "sourceMaps": true,
+      "outFiles": ["${workspaceFolder}/packages/vscode/dist/*.js"],
+      "env": {
+        "SERVER_PATH_DEV": "${workspaceRoot}/packages/vscode/target/debug/edlint_language_server",
+        "RUST_LOG": "debug"
+      }
+    },
+    {
+      "type": "lldb",
+      "request": "launch",
+      "name": "Debug Edlint",
+      "cargo": {
+        "env": {
+          "RUSTFLAGS": "-g"
+        },
+        "args": ["build", "--bin=edlint", "--package=edlint"],
+        "filter": {
+          "name": "edlint",
+          "kind": "bin"
+        }
+      }
+      // "args": ["--ARGS-TO-OXLINT"],
+      // "cwd": "PATH-TO-TEST-PROJECT"
+    }
+  ]
+}

@@ -1,0 +1,25 @@
+[package]
+name = "ed_lint_core"
+version = "0.1.0"
+authors.workspace = true
+categories.workspace = true
+homepage.workspace = true
+keywords.workspace = true
+license.workspace = true
+repository.workspace = true
+description.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+
+[[bin]]
+name = "generate_json_schema"
+path = "src/bin/generate_json_schema.rs"
+
+[dependencies]
+schemars.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+
+
+[lib]
+path = "src/lib.rs"

@@ -1,0 +1,19 @@
+{
+  "name": "ed-tools",
+  "private": true,
+  "packageManager": "pnpm@10.10.0",
+  "volta": {
+    "node": "22.14.0"
+  },
+  "scripts": {
+    "build": "pnpm --workspace-concurrency=1 --filter './packages/*' build",
+    "build-dev": "pnpm --workspace-concurrency=1 --filter './packages/*' build-dev",
+    "test": "pnpm --workspace-concurrency=1 --filter './packages/*' test"
+  },
+  "devDependencies": {
+    "@napi-rs/cli": "catalog:",
+    "emnapi": "1.4.3",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
+  }
+}

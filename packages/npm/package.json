@@ -1,0 +1,33 @@
+{
+  "name": "edlint",
+  "version": "0.0.1",
+  "description": "Architecture linter written in Rust",
+  "keywords": [],
+  "author": "Evgeny Paromov",
+  "license": "MIT",
+  "type": "module",
+  "main": "index.js",
+  "types": "index.d.ts",
+  "homepage": "https://ed.evocomm.space",
+  "bugs": "https://github.com/evo-community/edlint/issues",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/evo-community/edlint",
+    "directory": "packages/edlint"
+  },
+  "bin": {
+    "edlint": "bin/edlint",
+    "edlint_language_server": "bin/edlint_language_server"
+  },
+  "funding": {
+    "url": "https://github.com/sponsors/EvgenyParomov"
+  },
+  "engines": {
+    "node": ">=8.*"
+  },
+  "files": [
+    "bin/edlint",
+    "bin/edlint_language_server",
+    "README.md"
+  ]
+}
