@@ -63,6 +63,7 @@ abstractions:
       '*':
         $ref: '#/abstractions/group'
   module:
+
     children:
       dependencies-port:
         $ref: '#/abstractions/dependencies-port'

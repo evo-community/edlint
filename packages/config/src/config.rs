@@ -50,6 +50,16 @@ pub struct AbstractionConfig {
     pub rules: Vec<RuleConfig>,
 }
 
+impl AbstractionConfig {
+    pub fn new(name: AbstractionName) -> Self {
+        Self {
+            name,
+            children: Vec::new(),
+            rules: vec![],
+        }
+    }
+}
+
 #[derive(Debug)]
 pub struct Config {
     /** Root abstraction */

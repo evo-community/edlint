@@ -65,20 +65,7 @@ fn convert_abstraction_field_value<'a>(
             convert_inline_abstraction_schema(cache, schema, abstractions)
         }
         AbstractionFieldValueSchema::Link(link) => {
-            if let Some(config) = cache.get(&link.ref_) {
-                return Ok(config.clone());
-            }
-
-            let ref_name = ref_to_name(&link.ref_);
-            // Находим абстракцию по ссылке в коллекции абстракций
-            if let Some(schema) = abstractions.get(&ref_name) {
-                convert_abstraction_schema(cache, schema, abstractions, &ref_name)
-            } else {
-                Err(ConfigError::InvalidConfig(format!(
-                    "Abstraction not found by link: {}",
-                    &link.ref_
-                )))
-            }
+            resolve_abstraction_link(cache, link, abstractions)
         }
     }
 }
@@ -93,13 +80,6 @@ fn convert_abstraction_schema(
     abstractions: &IndexMap<String, AbstractionSchema>,
     name: &str,
 ) -> Result<AbstractionConfigRef, ConfigError> {
-    // Проверяем кэш, возможно эта абстракция уже преобразована
-    if let Some(cached) = cache.get(name) {
-        return Ok(cached.clone());
-    }
-
-    // Создаем пустую абстракцию и добавляем в кэш до рекурсивных вызовов,
-    // чтобы избежать циклических зависимостей
     let empty_abstraction = Rc::new(AbstractionConfig {
         name: name.to_string(),
         children: Vec::new(),
@@ -109,19 +89,10 @@ fn convert_abstraction_schema(
     cache.insert(name.to_string(), empty_abstraction.clone());
 
     // Обрабатываем extends, если указан
+
     let base_config = if let Some(extend) = &schema.extend {
-        let ref_name = ref_to_name(&extend.ref_);
-        // Находим базовую абстракцию
-        if let Some(base_schema) = abstractions.get(&ref_name) {
-            // Рекурсивно обрабатываем базовую абстракцию
-            let base = convert_abstraction_schema(cache, base_schema, abstractions, &ref_name)?;
-            Some(base)
-        } else {
-            return Err(ConfigError::InvalidConfig(format!(
-                "Base abstraction not found: {}",
-                &extend.ref_
-            )));
-        }
+        let base_config = resolve_abstraction_link(cache, extend, abstractions)?;
+        Some(base_config)
     } else {
         None
     };
@@ -188,6 +159,30 @@ fn convert_abstraction_schema(
     Ok(new_abstraction)
 }
 
+fn resolve_abstraction_link(
+    cache: &mut AbstractionCache,
+    link: &AbstractionLinkSchema,
+    abstractions: &IndexMap<String, AbstractionSchema>,
+) -> Result<AbstractionConfigRef, ConfigError> {
+    let ref_name = ref_to_name(&link.ref_);
+
+    if let Some(abstraction_ref) = cache.get(&ref_name) {
+        return Ok(abstraction_ref.clone());
+    }
+
+    // Находим базовую абстракцию
+    if let Some(base_schema) = abstractions.get(&ref_name) {
+        // Рекурсивно обрабатываем базовую абстракцию
+        let base = convert_abstraction_schema(cache, base_schema, abstractions, &ref_name)?;
+        Ok(base)
+    } else {
+        Err(ConfigError::InvalidConfig(format!(
+            "Base abstraction not found: {}",
+            &link.ref_
+        )))
+    }
+}
+
 fn convert_inline_abstraction_schema(
     cache: &mut AbstractionCache,
     schema: &NamedAbstractionSchema,
@@ -202,28 +197,14 @@ fn convert_inline_abstraction_schema(
 
     // Создаем пустую абстракцию и добавляем в кэш до рекурсивных вызовов,
     // чтобы избежать циклических зависимостей
-    let empty_abstraction = Rc::new(AbstractionConfig {
-        name: name.clone(),
-        children: Vec::new(),
-        rules: vec![],
-    });
+    let empty_abstraction = Rc::new(AbstractionConfig::new(name.clone()));
 
     cache.insert(name.clone(), empty_abstraction.clone());
 
     // Обрабатываем extends, если указан
     let base_config = if let Some(extend) = &schema.extend {
-        let ref_name = ref_to_name(&extend.ref_);
-        // Находим базовую абстракцию
-        if let Some(base_schema) = abstractions.get(&ref_name) {
-            // Рекурсивно обрабатываем базовую абстракцию
-            let base = convert_abstraction_schema(cache, base_schema, abstractions, &ref_name)?;
-            Some(base)
-        } else {
-            return Err(ConfigError::InvalidConfig(format!(
-                "Base abstraction not found: {}",
-                &extend.ref_
-            )));
-        }
+        let base_config = resolve_abstraction_link(cache, extend, abstractions)?;
+        Some(base_config)
     } else {
         None
     };

@@ -22,11 +22,9 @@ pub fn find_config(cwd: &Path) -> Result<PathBuf, ConfigError> {
 
         if !current_dir.pop() {
             // Достигли корня файловой системы
-            break;
+            return Err(ConfigError::ConfigNotFound);
         }
     }
-
-    Err(ConfigError::ConfigNotFound)
 }
 
 #[cfg(test)]
